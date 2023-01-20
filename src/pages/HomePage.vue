@@ -1,12 +1,19 @@
 <template>
-  <h1>Welcome to the Forum</h1>
+  <h1 class="push-top">Welcome to the Forum</h1>
   <CategoryList :categories="categories" />
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
+// import { storeToRefs } from "pinia";
+// import { useCategoriesStore } from "@/stores/CategoriesStore";
 import CategoryList from "@/components/CategoryList.vue";
-import sourceData from "@/data.json";
 
-const categories = reactive(sourceData.categories);
+// Vuex
+const store = useStore();
+const categories = computed(() => store.state.categories);
+
+// Pinia
+// const { categories } = storeToRefs(useCategoriesStore());
 </script>

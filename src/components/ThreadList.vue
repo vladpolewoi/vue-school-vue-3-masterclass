@@ -41,8 +41,8 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import sourceData from "@/data.json";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 defineProps({
   threads: {
@@ -50,13 +50,11 @@ defineProps({
     type: Array,
   },
 });
+const store = useStore();
 
-// const threads = reactive(sourceData.threads);
-// const posts = reactive(sourceData.posts);
-const users = reactive(sourceData.users);
+const users = computed(() => store.state.users);
 
-// const postById = (postId) => posts.find((p) => p.id === postId);
-const userById = (userId) => users.find((p) => p.id === userId);
+const userById = (userId) => users.value.find((p) => p.id === userId);
 </script>
 
 <style lang="scss" scoped></style>

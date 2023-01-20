@@ -10,7 +10,7 @@
 
 <script setup>
 import ForumList from "@/components/ForumList.vue";
-import sourceData from "@/data.json";
+import { useStore } from "vuex";
 
 defineProps({
   categories: {
@@ -18,9 +18,10 @@ defineProps({
     type: Array,
   },
 });
+const store = useStore();
 
 const getForumsForCategory = (category) => {
-  return sourceData.forums.filter((forum) => forum.categoryId === category.id);
+  return store.state.forums.filter((forum) => forum.categoryId === category.id);
 };
 </script>
 

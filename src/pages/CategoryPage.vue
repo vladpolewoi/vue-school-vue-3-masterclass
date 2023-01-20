@@ -9,8 +9,8 @@
 
 <script setup>
 import { computed } from "vue";
+import { useStore } from "vuex";
 import ForumList from "../components/ForumList.vue";
-import sourceData from "@/data.json";
 
 const props = defineProps({
   id: {
@@ -18,12 +18,13 @@ const props = defineProps({
     type: String,
   },
 });
+const store = useStore();
 
 const category = computed(() =>
-  sourceData.categories.find((category) => category.id === props.id)
+  store.state.categories.find((category) => category.id === props.id)
 );
 
 const getForumsForCategory = (category) => {
-  return sourceData.forums.filter((forum) => forum.categoryId === category.id);
+  return store.state.forums.filter((forum) => forum.categoryId === category.id);
 };
 </script>

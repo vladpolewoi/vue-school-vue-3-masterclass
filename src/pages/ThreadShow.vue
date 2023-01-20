@@ -1,6 +1,14 @@
 <template>
   <div class="col-large push-top">
-    <h1>{{ thread.title }}</h1>
+    <h1>
+      {{ thread.title }}
+      <routerLink
+        :to="{ name: 'ThreadEdit', params: { id } }"
+        class="btn-green btn-small"
+        tag="button"
+        >Edit Thread</routerLink
+      >
+    </h1>
 
     <PostList :posts="threadPosts" />
     <PostEditor @save-post="onSavePost" />
@@ -8,8 +16,8 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue";
-import sourceData from "@/data.json";
+import { computed } from "vue";
+import { useStore } from "vuex";
 import PostList from "@/components/PostList.vue";
 import PostEditor from "@/components/PostEditor.vue";
 
@@ -19,14 +27,17 @@ const props = defineProps({
     type: String,
   },
 });
+const store = useStore();
 
-const posts = reactive(sourceData.posts);
+const posts = computed(() => store.state.posts);
 const thread = computed(() =>
-  sourceData.threads.find((el) => el.id === props.id)
+  store.state.threads.find((el) => el.id === props.id)
 );
-const threadPosts = computed(() =>
-  posts.filter((post) => post.threadId === thread.value.id)
-);
+const threadPosts = computed(() => {
+  return posts.value.filter(
+    (post) => post && post.threadId === thread.value.id
+  );
+});
 
 const onSavePost = ({ post }) => {
   const payload = {
@@ -34,8 +45,7 @@ const onSavePost = ({ post }) => {
     threadId: thread.value.id,
   };
 
-  posts.push(payload);
-  thread.value.posts.push(payload);
+  store.dispatch("createPost", payload);
 };
 </script>
 

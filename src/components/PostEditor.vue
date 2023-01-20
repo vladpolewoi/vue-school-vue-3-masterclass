@@ -31,12 +31,8 @@ const emit = defineEmits(["save-post"]);
 const text = ref("");
 
 const save = () => {
-  const postId = "0000" + Math.random();
   const post = {
-    id: postId,
     text: text.value,
-    publishedAt: Math.floor(Date.now() / 1000),
-    userId: "38St7Q8Zi2N1SPa5ahzssq9kbyp1",
   };
 
   emit("save-post", { post });

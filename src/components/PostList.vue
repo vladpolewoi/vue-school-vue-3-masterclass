@@ -33,8 +33,8 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
-import sourceData from "@/data.json";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 defineProps({
   posts: {
@@ -42,8 +42,9 @@ defineProps({
     type: Array,
   },
 });
+const store = useStore();
 
-const users = reactive(sourceData.users);
+const users = computed(() => store.state.users);
 
-const userById = (userId) => users.find((p) => p.id === userId);
+const userById = (userId) => users.value.find((p) => p.id === userId);
 </script>
