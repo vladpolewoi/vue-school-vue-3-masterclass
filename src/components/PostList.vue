@@ -14,7 +14,12 @@
           />
         </a>
 
-        <p class="desktop-only text-small">107 posts</p>
+        <p class="desktop-only text-small">
+          {{ userById(post.userId).postsCount }} posts
+        </p>
+        <p class="desktop-only text-small">
+          {{ userById(post.userId).threadsCount }} threads
+        </p>
       </div>
 
       <div class="post-content">
@@ -33,7 +38,6 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
 import { useStore } from "vuex";
 
 defineProps({
@@ -44,7 +48,5 @@ defineProps({
 });
 const store = useStore();
 
-const users = computed(() => store.state.users);
-
-const userById = (userId) => users.value.find((p) => p.id === userId);
+const userById = (userId) => store.getters.user(userId);
 </script>

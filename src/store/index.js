@@ -8,26 +8,49 @@ export default createStore({
     ...sourceData,
   },
   getters: {
-    getAuthUser: (state) => {
-      const user = findById(state.users, state.authId);
+    getAuthUser: (state, getters) => {
+      return getters.user(state.authId);
+    },
+    thread: (state) => {
+      return (id) => {
+        const thread = findById(state.threads, id);
 
-      if (!user) {
-        return null;
-      }
+        return {
+          ...thread,
+          get author() {
+            return findById(state.users, thread.userId);
+          },
+          get repliesCount() {
+            return thread.posts.length - 1;
+          },
+          get contributorsCount() {
+            return thread.contributors.length;
+          },
+        };
+      };
+    },
+    user: (state) => {
+      return (id) => {
+        const user = findById(state.users, id);
 
-      const posts = state.posts.filter((post) => post.userId === user.id);
-      const threads = state.threads.filter(
-        (thread) => thread.userId === user.id
-      );
-      const postsCount = posts.length;
-      const threadsCount = threads.length;
+        if (!user) {
+          return null;
+        }
 
-      return {
-        ...user,
-        posts,
-        threads,
-        postsCount,
-        threadsCount,
+        const posts = state.posts.filter((post) => post.userId === user.id);
+        const threads = state.threads.filter(
+          (thread) => thread.userId === user.id
+        );
+        const postsCount = posts.length;
+        const threadsCount = threads.length;
+
+        return {
+          ...user,
+          posts,
+          threads,
+          postsCount,
+          threadsCount,
+        };
       };
     },
   },
@@ -45,6 +68,10 @@ export default createStore({
       });
       commit("APPEND_POST_TO_THREAD", {
         childId: payload.id,
+        parentId: post.threadId,
+      });
+      commit("APPEND_CONTRIBUTOR_TO_THREAD", {
+        childId: payload.userId,
         parentId: post.threadId,
       });
     },
@@ -103,6 +130,10 @@ export default createStore({
       parent: "users",
       child: "threads",
     }),
+    APPEND_CONTRIBUTOR_TO_THREAD: makeAppendChildToParentMutation({
+      parent: "threads",
+      child: "contributors",
+    }),
   },
 });
 
@@ -111,6 +142,9 @@ function makeAppendChildToParentMutation({ parent, child }) {
     const resource = findById(state[parent], parentId);
 
     resource[child] = resource[child] || [];
-    resource[child].push(childId);
+
+    if (!resource[child].includes(childId)) {
+      resource[child].push(childId);
+    }
   };
 }
