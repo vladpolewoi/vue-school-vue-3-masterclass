@@ -1,7 +1,7 @@
 <template>
   <div class="post-list" v-for="post in posts" :key="post.id">
     <div class="post">
-      <div class="user-info">
+      <div class="user-info" v-if="userById(post.userId)">
         <a href="profile.html#profile-details" class="user-name">{{
           userById(post.userId).name
         }}</a>

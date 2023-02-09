@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 // import { storeToRefs } from "pinia";
 // import { useCategoriesStore } from "@/stores/CategoriesStore";
@@ -13,6 +13,14 @@ import CategoryList from "@/components/CategoryList.vue";
 // Vuex
 const store = useStore();
 const categories = computed(() => store.state.categories);
+
+onBeforeMount(async () => {
+  const categoriesData = await store.dispatch("fetchAllCategories");
+  console.log(categoriesData);
+  const forumsIds = categoriesData.flatMap((category) => category.forums);
+  console.log(forumsIds);
+  store.dispatch("fetchForums", { ids: forumsIds });
+});
 
 // Pinia
 // const { categories } = storeToRefs(useCategoriesStore());

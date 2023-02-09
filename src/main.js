@@ -1,13 +1,13 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { initializeApp } from "firebase/app";
-
+import firebase from "firebase/compat/app";
+// import "firebase/compat/firestore";
 import App from "./App.vue";
 import router from "./router";
 import store from "@/store";
 import firebaseConfig from "@/config/firebase.js";
 
-const firebase = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 const app = createApp(App);
 

@@ -1,19 +1,27 @@
 import { createStore } from "vuex";
-import sourceData from "@/data.json";
 import { findById, upsert } from "@/helpers";
+import firebase from "firebase/compat";
 
 export default createStore({
   state: {
+    forums: [],
+    users: [],
+    posts: [],
+    threads: [],
+    categories: [],
     authId: "VXjpr2WHa8Ux4Bnggym8QFLdv5C3",
-    ...sourceData,
   },
   getters: {
     getAuthUser: (state, getters) => {
-      return getters.user(state.authId);
+      return getters.user(state.authId) || {};
     },
     thread: (state) => {
       return (id) => {
         const thread = findById(state.threads, id);
+
+        if (!thread) {
+          return null;
+        }
 
         return {
           ...thread,
@@ -63,9 +71,7 @@ export default createStore({
         ...post,
       };
 
-      commit("SET_POST", {
-        post: payload,
-      });
+      commit("SET_ITEM", { resource: "posts", item: payload });
       commit("APPEND_POST_TO_THREAD", {
         childId: payload.id,
         parentId: post.threadId,
@@ -76,7 +82,7 @@ export default createStore({
       });
     },
     updateUser({ commit }, user) {
-      commit("SET_USER", { user, userId: user.id });
+      commit("SET_ITEM", { resource: "users", item: user });
     },
     async createThread({ commit, state, dispatch }, { text, title, forumId }) {
       const id = "0000" + Math.random();
@@ -89,7 +95,7 @@ export default createStore({
         publishedAt: Math.floor(Date.now() / 1000),
       };
 
-      commit("SET_THREAD", { thread });
+      commit("SET_ITEM", { resource: "threads", item: thread });
       commit("APPEND_THREAD_TO_USER", { parentId: userId, childId: id });
       commit("APPEND_THREAD_TO_FORUM", { parentId: forumId, childId: id });
       dispatch("createPost", { text, threadId: id });
@@ -101,22 +107,74 @@ export default createStore({
       const post = findById(state.posts, thread.posts[0]);
       const newThread = { ...thread, title };
       const newPost = { ...post, text };
-      commit("SET_THREAD", { thread: newThread });
-      commit("SET_POST", { post: newPost });
+      commit("SET_ITEM", { resource: "threads", item: newThread });
+      commit("SET_ITEM", { resource: "posts", item: newPost });
 
       return newThread;
     },
+
+    fetchThread({ dispatch }, { id }) {
+      return dispatch("fetchItem", { resource: "threads", id, emoji: "📄" });
+    },
+    fetchUser({ dispatch }, { id }) {
+      return dispatch("fetchItem", { resource: "users", id, emoji: "👤" });
+    },
+    fetchPost({ dispatch }, { id }) {
+      return dispatch("fetchItem", { resource: "posts", id, emoji: "💬" });
+    },
+    fetchPosts({ dispatch }, { ids }) {
+      return dispatch("fetchItems", { resource: "posts", ids, emoji: "💬" });
+    },
+    fetchThreads({ dispatch }, { ids }) {
+      return dispatch("fetchItems", { resource: "threads", ids, emoji: "📄" });
+    },
+    fetchUsers({ dispatch }, { ids }) {
+      return dispatch("fetchItems", { resource: "users", ids, emoji: "👤" });
+    },
+    fetchForums({ dispatch }, { ids }) {
+      return dispatch("fetchItems", { resource: "forums", ids, emoji: "🏁" });
+    },
+    fetchAllCategories({ commit }) {
+      console.log("🔥", "🏷", "all categories");
+      return new Promise((resolve) => {
+        firebase
+          .firestore()
+          .collection("categories")
+          .onSnapshot((snapshot) => {
+            const categories = snapshot.docs.map((doc) => {
+              const item = { ...doc.data(), id: doc.id };
+              commit("SET_ITEM", { resource: "categories", item });
+
+              return item;
+            });
+
+            resolve(categories);
+          });
+      });
+    },
+    fetchItem({ commit }, { id, emoji, resource }) {
+      console.log("🔥", emoji, id);
+      return new Promise((resolve) => {
+        firebase
+          .firestore()
+          .collection(resource)
+          .doc(id)
+          .onSnapshot((doc) => {
+            const item = { ...doc.data(), id: doc.id };
+            commit("SET_ITEM", { item, resource, id });
+            resolve(item);
+          });
+      });
+    },
+    fetchItems({ dispatch }, { ids, resource, emoji }) {
+      return Promise.all(
+        ids.map((id) => dispatch("fetchItem", { id, resource, emoji }))
+      );
+    },
   },
   mutations: {
-    SET_POST(state, { post }) {
-      upsert(state.posts, post);
-    },
-    SET_THREAD(state, { thread }) {
-      upsert(state.threads, thread);
-    },
-    SET_USER(state, { user, userId }) {
-      const userIndex = state.users.findIndex((user) => user.id === userId);
-      state.users[userIndex] = user;
+    SET_ITEM(state, { resource, item }) {
+      upsert(state[resource], item);
     },
     APPEND_POST_TO_THREAD: makeAppendChildToParentMutation({
       parent: "threads",

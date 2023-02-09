@@ -1,5 +1,5 @@
 <template>
-  <div class="col-large push-top">
+  <div class="col-large push-top" v-if="thread">
     <h1>
       {{ thread.title }}
       <routerLink
@@ -11,7 +11,7 @@
     </h1>
 
     <p>
-      By <a href="#" class="link-unstyled">{{ thread.author.name }}</a
+      By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a
       >, <AppDate :timestamp="thread.publishedAt" />.
       <span
         style="float: right; margin-top: 2px"
@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import AppDate from "@/components/AppDate.vue";
 import PostList from "@/components/PostList.vue";
@@ -57,6 +57,19 @@ const onSavePost = ({ post }) => {
 
   store.dispatch("createPost", payload);
 };
+
+onMounted(async () => {
+  // fetch thread
+  const thread = await store.dispatch("fetchThread", { id: props.id });
+
+  // fetch user
+  store.dispatch("fetchUser", { id: thread.userId });
+
+  // fetch the posts in thred.posts
+  const posts = await store.dispatch("fetchPosts", { ids: thread.posts });
+  const users = posts.map((post) => post.userId);
+  store.dispatch("fetchUsers", { ids: users });
+});
 </script>
 
 <style lang="scss" scoped></style>
