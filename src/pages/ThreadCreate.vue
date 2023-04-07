@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="col-full push-top">
+    <div v-if="forum" class="col-full push-top">
       <h1>
         Create new thread in <i>{{ forum.name }}</i>
       </h1>
@@ -23,6 +23,8 @@ const props = defineProps({
 });
 const router = useRouter();
 const store = useStore();
+
+store.dispatch("fetchForum", { id: props.forumId });
 
 const forum = computed(() =>
   store.state.forums.find((forum) => forum.id === props.forumId)

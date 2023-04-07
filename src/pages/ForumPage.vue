@@ -1,5 +1,5 @@
 <template>
-  <div class="col-full push-top">
+  <div v-if="forum" class="col-full push-top">
     <div class="forum-header">
       <div class="forum-details">
         <h1>{{ forum?.name }}</h1>
@@ -13,13 +13,13 @@
     </div>
   </div>
 
-  <div class="col-full push-top">
+  <div class="col-full push-top" v-if="threads?.length">
     <ThreadList :threads="threads" />
   </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 
 import ThreadList from "@/components/ThreadList.vue";
@@ -36,8 +36,20 @@ const forum = computed(() =>
   store.state.forums?.find((el) => el.id === props.id)
 );
 const threads = computed(() =>
-  forum.value.threads.map((threadId) => store.getters.thread(threadId))
+  forum.value?.threads
+    ?.map((threadId) => store.getters.thread(threadId))
+    .filter(Boolean)
 );
+onMounted(async () => {
+  const forumData = await store.dispatch("fetchForum", { id: props.id });
+  const threadsData = await store.dispatch("fetchThreads", {
+    ids: forumData.threads,
+  });
+  console.log(threadsData.map((thread) => thread.userId));
+  store.dispatch("fetchUsers", {
+    ids: threadsData.map((thread) => thread.userId),
+  });
+});
 </script>
 
 <style lang="scss" scoped></style>

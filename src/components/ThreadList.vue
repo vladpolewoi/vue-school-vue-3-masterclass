@@ -54,7 +54,7 @@ const store = useStore();
 
 const users = computed(() => store.state.users);
 
-const userById = (userId) => users.value.find((p) => p.id === userId);
+const userById = (userId) => users.value.find((p) => p.id === userId) || {};
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div v-if="thread && text" class="container">
     <div class="col-full push-top">
       <h1>
         Editing <i>{{ thread.title }}</i>
@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 
@@ -33,7 +33,8 @@ const thread = computed(() =>
   store.state.threads.find((thread) => thread.id === props.id)
 );
 const text = computed(
-  () => store.state.posts.find((post) => post.id === thread.value.posts[0]).text
+  () =>
+    store.state.posts.find((post) => post.id === thread.value.posts[0])?.text
 );
 
 const save = async ({ title, text }) => {
@@ -48,6 +49,11 @@ const save = async ({ title, text }) => {
 const cancel = () => {
   router.push({ name: "ThreadShow", params: { id: thread.value.id } });
 };
+
+onMounted(async () => {
+  const threadData = await store.dispatch("fetchThread", { id: props.id });
+  store.dispatch("fetchPost", { id: threadData.posts[0] });
+});
 </script>
 
 <style lang="scss" scoped></style>

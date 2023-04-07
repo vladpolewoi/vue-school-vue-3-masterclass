@@ -16,12 +16,15 @@ dayjs.extend(localizedDate);
 const props = defineProps({
   timestamp: {
     required: true,
-    type: Number,
+    type: [Number, Object],
   },
 });
 
-const timeAgo = computed(() => dayjs.unix(props.timestamp).fromNow());
+const normalizedTimestamp = computed(
+  () => props.timestamp?.seconds || props.timestamp
+);
+const timeAgo = computed(() => dayjs.unix(normalizedTimestamp.value).fromNow());
 const localizedTime = computed(() =>
-  dayjs.unix(props.timestamp).format("llll")
+  dayjs.unix(normalizedTimestamp.value).format("llll")
 );
 </script>
