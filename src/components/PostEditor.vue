@@ -9,14 +9,14 @@
           name="content"
           rows="8"
           cols="140"
-          v-model="text"
+          v-model="postCopy.text"
         ></textarea>
       </div>
 
       <div class="btn-group">
         <button class="btn btn-ghost">Cancel</button>
         <button class="btn btn-blue" type="submit" name="Publish">
-          Publish
+          {{ post.id ? "Update Post" : "Submit Post" }}
         </button>
       </div>
     </form>
@@ -24,20 +24,22 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-
+import { reactive } from "vue";
+const props = defineProps({
+  post: {
+    type: Object,
+    default: () => ({
+      text: null,
+    }),
+  },
+});
 const emit = defineEmits(["save-post"]);
-
-const text = ref("");
+const postCopy = reactive({ ...props.post });
 
 const save = () => {
-  const post = {
-    text: text.value,
-  };
+  emit("save-post", { post: postCopy });
 
-  emit("save-post", { post });
-
-  text.value = "";
+  postCopy.text = "";
 };
 </script>
 

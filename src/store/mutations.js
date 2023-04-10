@@ -1,8 +1,14 @@
-import { findById, upsert } from "@/helpers";
+import { findById, upsert, docToResource } from "@/helpers";
 
 export default {
   SET_ITEM(state, { resource, item }) {
-    upsert(state[resource], item);
+    upsert(state[resource], docToResource(item));
+  },
+  APPEND_UNSUBSCRIBE(state, unsubscribe) {
+    state.unsubscribes.push(unsubscribe);
+  },
+  CLEAR_ALL_UNSUBSCRIBES(state) {
+    state.unsubscribes = [];
   },
   APPEND_POST_TO_THREAD: makeAppendChildToParentMutation({
     parent: "threads",

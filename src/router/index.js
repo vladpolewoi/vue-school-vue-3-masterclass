@@ -8,7 +8,7 @@ import ThreadCreate from "@/pages/ThreadCreate.vue";
 import ThreadEdit from "@/pages/ThreadEdit.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
 import NotFound from "@/pages/NotFound.vue";
-import sourceData from "@/data.json";
+import store from "@/store";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,6 +91,10 @@ const router = createRouter({
 
     return scroll;
   },
+});
+
+router.beforeEach(() => {
+  store.dispatch("unsubscribeAllSnapshots");
 });
 
 export default router;

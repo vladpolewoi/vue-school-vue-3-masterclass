@@ -6,6 +6,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "@/store";
 import firebaseConfig from "@/config/firebase.js";
+import FontAwesome from "@/plugins/FontAwesome.js";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -14,6 +15,7 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.use(store);
+app.use(FontAwesome);
 
 // register global components
 const components = import.meta.globEager("./components/*.vue");
