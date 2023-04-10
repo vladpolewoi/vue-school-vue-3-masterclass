@@ -1,20 +1,22 @@
 <template>
-  <div v-if="forum" class="col-full push-top">
-    <div class="forum-header">
-      <div class="forum-details">
-        <h1>{{ forum?.name }}</h1>
-        <p class="text-lead">{{ forum.description }}</p>
+  <div class="container col-full" v-if="ready">
+    <div v-if="forum" class="col-full push-top">
+      <div class="forum-header">
+        <div class="forum-details">
+          <h1>{{ forum?.name }}</h1>
+          <p class="text-lead">{{ forum.description }}</p>
+        </div>
+        <routerLink
+          :to="{ name: 'ThreadCreate', params: { forumId: forum.id } }"
+          class="btn-green btn-small"
+          >Start a thread</routerLink
+        >
       </div>
-      <routerLink
-        :to="{ name: 'ThreadCreate', params: { forumId: forum.id } }"
-        class="btn-green btn-small"
-        >Start a thread</routerLink
-      >
     </div>
-  </div>
 
-  <div class="col-full push-top" v-if="threads?.length">
-    <ThreadList :threads="threads" />
+    <div class="col-full push-top" v-if="threads?.length">
+      <ThreadList :threads="threads" />
+    </div>
   </div>
 </template>
 
@@ -23,6 +25,7 @@ import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 
 import ThreadList from "@/components/ThreadList.vue";
+import asyncDataStatus from "@/composables/asyncDataStatus";
 
 const props = defineProps({
   id: {
@@ -31,6 +34,9 @@ const props = defineProps({
   },
 });
 const store = useStore();
+const emit = defineEmits(["ready"]);
+
+const { ready, fetched } = asyncDataStatus(emit);
 
 const forum = computed(() =>
   store.state.forums?.find((el) => el.id === props.id)
@@ -45,10 +51,10 @@ onMounted(async () => {
   const threadsData = await store.dispatch("fetchThreads", {
     ids: forumData.threads,
   });
-  console.log(threadsData.map((thread) => thread.userId));
-  store.dispatch("fetchUsers", {
+  await store.dispatch("fetchUsers", {
     ids: threadsData.map((thread) => thread.userId),
   });
+  fetched();
 });
 </script>
 

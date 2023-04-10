@@ -1,5 +1,5 @@
 <template>
-  <div v-if="thread && text" class="container">
+  <div v-if="ready && thread && text" class="container col-full">
     <div class="col-full push-top">
       <h1>
         Editing <i>{{ thread.title }}</i>
@@ -19,6 +19,7 @@
 import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import asyncDataStatus from "@/composables/asyncDataStatus";
 
 const props = defineProps({
   id: {
@@ -28,6 +29,9 @@ const props = defineProps({
 });
 const router = useRouter();
 const store = useStore();
+const emit = defineEmits(["ready"]);
+
+const { ready, fetched } = asyncDataStatus(emit);
 
 const thread = computed(() =>
   store.state.threads.find((thread) => thread.id === props.id)
@@ -52,7 +56,8 @@ const cancel = () => {
 
 onMounted(async () => {
   const threadData = await store.dispatch("fetchThread", { id: props.id });
-  store.dispatch("fetchPost", { id: threadData.posts[0] });
+  await store.dispatch("fetchPost", { id: threadData.posts[0] });
+  fetched();
 });
 </script>
 

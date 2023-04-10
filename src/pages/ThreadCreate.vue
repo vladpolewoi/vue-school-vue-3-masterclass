@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <div v-if="forum" class="col-full push-top">
+  <div class="container col-full" v-if="ready">
+    <div class="col-full push-top">
       <h1>
         Create new thread in <i>{{ forum.name }}</i>
       </h1>
@@ -11,9 +11,10 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import asyncDataStatus from "@/composables/asyncDataStatus";
 
 const props = defineProps({
   forumId: {
@@ -23,8 +24,9 @@ const props = defineProps({
 });
 const router = useRouter();
 const store = useStore();
+const emit = defineEmits(["ready"]);
 
-store.dispatch("fetchForum", { id: props.forumId });
+const { ready, fetched } = asyncDataStatus(emit);
 
 const forum = computed(() =>
   store.state.forums.find((forum) => forum.id === props.forumId)
@@ -42,6 +44,11 @@ const save = async ({ title, text }) => {
 const cancel = () => {
   router.push({ name: "Forum", params: { id: forum.value.id } });
 };
+
+onBeforeMount(async () => {
+  await store.dispatch("fetchForum", { id: props.forumId });
+  fetched();
+});
 </script>
 
 <style lang="scss" scoped></style>

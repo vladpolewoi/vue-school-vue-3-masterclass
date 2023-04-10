@@ -5,9 +5,7 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "NotFound",
-  props: {},
-};
+<script setup>
+const emit = defineEmits(["ready"]);
+emit("ready");
 </script>
