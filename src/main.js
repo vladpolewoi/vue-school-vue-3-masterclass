@@ -1,17 +1,14 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import firebase from "firebase/compat/app";
-// import "firebase/compat/firestore";
 import App from "./App.vue";
 import router from "./router";
 import store from "@/store";
 import firebaseConfig from "@/config/firebase.js";
 import FontAwesome from "@/plugins/FontAwesome.js";
-
 firebase.initializeApp(firebaseConfig);
-
+console.log(firebaseConfig);
 const app = createApp(App);
-
 app.use(createPinia());
 app.use(router);
 app.use(store);

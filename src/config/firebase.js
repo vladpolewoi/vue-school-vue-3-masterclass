@@ -1,8 +1,8 @@
 export default {
-  apiKey: "AIzaSyAlRp5g3m9r2LqdP6t0rBU-3R0UgLc0a2w",
-  authDomain: "vueschoolforum-26d07.firebaseapp.com",
-  projectId: "vueschoolforum-26d07",
-  storageBucket: "vueschoolforum-26d07.appspot.com",
-  messagingSenderId: "19177849203",
-  appId: "1:19177849203:web:2973393826f463e38fc506",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };

@@ -2,11 +2,13 @@
   "name": "vue3_lessons",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "db:seed": "firebase firestore:delete --all-collections && node firestoreImport.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

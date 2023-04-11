@@ -1,8 +1,12 @@
 // Imports
-const firestoreService = require("firestore-export-import");
-const firebaseConfig = require("./src/config/firebase.js");
-const serviceAccount = require("./serviceAccount.json");
-const fs = require("fs");
+import firestoreService from "firestore-export-import";
+import firebaseConfig from "./src/config/firebase.js";
+import fs from "fs";
+import * as url from "url";
+const loadJSON = (path) =>
+  JSON.parse(fs.readFileSync(new URL(path, import.meta.url)));
+const serviceAccount = loadJSON("./serviceAccount.json");
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 const tempFileName = `${__dirname}/data-temp.json`;
 
 // procedure
