@@ -10,6 +10,12 @@ export default {
   CLEAR_ALL_UNSUBSCRIBES(state) {
     state.unsubscribes = [];
   },
+  SET_AUTH_ID(state, id) {
+    state.authId = id;
+  },
+  SET_AUTH_USER_UNSUBSCRIBE(state, unsubscribe) {
+    state.authUserUnsubscribe = unsubscribe;
+  },
   APPEND_POST_TO_THREAD: makeAppendChildToParentMutation({
     parent: "threads",
     child: "posts",

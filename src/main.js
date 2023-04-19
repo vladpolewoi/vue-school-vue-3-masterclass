@@ -6,9 +6,18 @@ import router from "./router";
 import store from "@/store";
 import firebaseConfig from "@/config/firebase.js";
 import FontAwesome from "@/plugins/FontAwesome.js";
+
 firebase.initializeApp(firebaseConfig);
-console.log(firebaseConfig);
+firebase.auth().onAuthStateChanged((user) => {
+  store.dispatch("unsubscribeAuthUserSnapshot");
+
+  if (user) {
+    store.dispatch("fetchAuthUser");
+  }
+});
+
 const app = createApp(App);
+
 app.use(createPinia());
 app.use(router);
 app.use(store);

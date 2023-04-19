@@ -2,7 +2,7 @@ import { findById } from "@/helpers";
 
 export default {
   getAuthUser: (state, getters) => {
-    return getters.user(state.authId) || {};
+    return getters.user(state.authId) || null;
   },
   thread: (state) => {
     return (id) => {

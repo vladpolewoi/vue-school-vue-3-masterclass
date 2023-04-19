@@ -12,8 +12,8 @@
     </div>
     <nav class="navbar">
       <ul>
-        <li class="navbar-user">
-          <routerLink :to="{ name: 'Profile' }">
+        <li v-if="user" class="navbar-user">
+          <a @click.prevent="isUserDropdownOpen = !isUserDropdownOpen">
             <img
               class="avatar-small"
               :src="user.avatar"
@@ -27,19 +27,30 @@
                 alt=""
               />
             </span>
-          </routerLink>
+          </a>
 
-          <!-- dropdown menu -->
-          <!-- add class "active-drop" to show the dropdown -->
-          <div id="user-dropdown">
+          <div
+            id="user-dropdown"
+            :class="{ 'active-drop': isUserDropdownOpen }"
+          >
             <div class="triangle-drop"></div>
             <ul class="dropdown-menu">
               <li class="dropdown-menu-item">
-                <a href="profile.html">View profile</a>
+                <router-link :to="{ name: 'Profile' }"
+                  >View profile</router-link
+                >
               </li>
-              <li class="dropdown-menu-item"><a href="#">Log out</a></li>
+              <li class="dropdown-menu-item">
+                <a @click.prevent="onSignOut">Sign Out</a>
+              </li>
             </ul>
           </div>
+        </li>
+        <li v-if="!user" class="navbar-item">
+          <router-link :to="{ name: 'Login' }">Sign In</router-link>
+        </li>
+        <li v-if="!user" class="navbar-item">
+          <router-link :to="{ name: 'Register' }">Register</router-link>
         </li>
       </ul>
 
@@ -68,10 +79,17 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "vuex";
+
 const store = useStore();
 const user = computed(() => store.getters["getAuthUser"]);
+
+const isUserDropdownOpen = ref(false);
+
+function onSignOut() {
+  store.dispatch("signOut");
+}
 </script>
 
 <style lang="scss" scoped></style>
