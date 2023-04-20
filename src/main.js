@@ -8,13 +8,6 @@ import firebaseConfig from "@/config/firebase.js";
 import FontAwesome from "@/plugins/FontAwesome.js";
 
 firebase.initializeApp(firebaseConfig);
-firebase.auth().onAuthStateChanged((user) => {
-  store.dispatch("unsubscribeAuthUserSnapshot");
-
-  if (user) {
-    store.dispatch("fetchAuthUser");
-  }
-});
 
 const app = createApp(App);
 

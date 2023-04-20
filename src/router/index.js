@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import HomeView from "../views/HomeView.vue";
 import HomePage from "@/pages/HomePage.vue";
 import CategoryPage from "@/pages/CategoryPage.vue";
 import ForumPage from "@/pages/ForumPage.vue";
@@ -9,6 +8,7 @@ import ThreadEdit from "@/pages/ThreadEdit.vue";
 import ProfilePage from "@/pages/ProfilePage.vue";
 import NotFound from "@/pages/NotFound.vue";
 import store from "@/store";
+import { findById } from "@/helpers";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,13 +22,14 @@ const router = createRouter({
       path: "/me",
       name: "Profile",
       component: ProfilePage,
-      meta: { toTop: true, smoothScroll: true },
+      meta: { toTop: true, smoothScroll: true, requiresAuth: true },
     },
     {
       path: "/me/edit",
       name: "ProfileEdit",
       component: ProfilePage,
       props: { edit: true },
+      meta: { requiresAuth: true },
     },
     {
       path: "/category/:id",
@@ -47,45 +48,56 @@ const router = createRouter({
       name: "ThreadShow",
       component: ThreadShow,
       props: true,
-      // beforeEnter(to, from, next) {
-      //   const isThread = sourceData.threads.find(
-      //     (thread) => thread.id === to.params.id
-      //   );
+      async beforeEnter(to, from, next) {
+        await store.dispatch("fetchThread", { id: to.params.id });
+        const isThread = findById(store.state.threads, to.params.id);
 
-      //   if (isThread) {
-      //     return next();
-      //   } else {
-      //     next({
-      //       name: "NotFound",
-      //       params: { pathMatch: to.path.substring(1).split("/") },
-      //       // preserve existing query and hash
-      //       query: to.query,
-      //       hash: to.hash,
-      //     });
-      //   }
-      // },
+        if (isThread) {
+          return next();
+        } else {
+          next({
+            name: "NotFound",
+            params: { pathMatch: to.path.substring(1).split("/") },
+            // preserve existing query and hash
+            query: to.query,
+            hash: to.hash,
+          });
+        }
+      },
     },
     {
       path: "/forum/:forumId/thread/create",
       name: "ThreadCreate",
       component: ThreadCreate,
       props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: "/thread/:id/edit",
       name: "ThreadEdit",
       component: ThreadEdit,
       props: true,
+      meta: { requiresAuth: true },
     },
     {
       path: "/register",
       name: "Register",
       component: () => import("@/pages/RegisterPage.vue"),
+      meta: { requiresGuest: true },
     },
     {
       path: "/login",
       name: "Login",
       component: () => import("@/pages/LoginPage.vue"),
+      meta: { requiresGuest: true },
+    },
+    {
+      path: "/logout",
+      name: "Logout",
+      async beforeEnter() {
+        await store.dispatch("signOut");
+        return { name: "Home" };
+      },
     },
     {
       path: "/:pathMatch(.*)*",
@@ -103,8 +115,17 @@ const router = createRouter({
   },
 });
 
-router.beforeEach(() => {
+router.beforeEach(async (to) => {
+  await store.dispatch("initAuthentication");
   store.dispatch("unsubscribeAllSnapshots");
+
+  if (to.meta.requiresAuth && !store.state.authId) {
+    return { name: "Login" };
+  }
+
+  if (to.meta.requiresGuest && store.state.authId) {
+    return { name: "Home" };
+  }
 });
 
 export default router;

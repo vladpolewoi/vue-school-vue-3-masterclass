@@ -26,6 +26,9 @@ import UserProfileCardEditor from "@/components/UserProfileCardEditor.vue";
 import { computed } from "vue";
 import { useStore } from "vuex";
 
+const emit = defineEmits(["ready"]);
+emit("ready");
+
 const store = useStore();
 const user = computed(() => store.getters["getAuthUser"]);
 

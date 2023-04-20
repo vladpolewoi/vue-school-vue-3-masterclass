@@ -2,6 +2,23 @@ import firebase from "firebase/compat";
 import { findById, docToResource } from "@/helpers";
 
 export default {
+  initAuthentication({ dispatch, commit, state }) {
+    if (state.authObserverUnsubscribe) {
+      state.authObserverUnsubscribe();
+    }
+
+    return new Promise((resolve) => {
+      const unsubscribe = firebase.auth().onAuthStateChanged(async (user) => {
+        if (user) {
+          await dispatch("fetchAuthUser");
+          resolve(user);
+        }
+
+        resolve(null);
+      });
+      commit("SET_AUTH_OBSERVER_UNSUBSCRIBE", unsubscribe);
+    });
+  },
   async createPost({ commit, state }, post) {
     const payload = {
       userId: state.authId,
@@ -193,14 +210,14 @@ export default {
   fetchUser: ({ dispatch }, { id }) =>
     dispatch("fetchItem", { resource: "users", id, emoji: "👤" }),
 
-  fetchAuthUser: ({ dispatch, commit }) => {
+  fetchAuthUser: async ({ dispatch, commit }) => {
     const userId = firebase.auth().currentUser?.uid;
 
     if (!userId) {
       return null;
     }
 
-    dispatch("fetchItem", {
+    await dispatch("fetchItem", {
       resource: "users",
       id: userId,
       emoji: "👤",
@@ -259,9 +276,13 @@ export default {
         .collection(resource)
         .doc(id)
         .onSnapshot((doc) => {
-          const item = { ...doc.data(), id: doc.id };
-          commit("SET_ITEM", { item, resource, id });
-          resolve(item);
+          if (doc.exists) {
+            const item = { ...doc.data(), id: doc.id };
+            commit("SET_ITEM", { item, resource, id });
+            resolve(item);
+          }
+
+          resolve(null);
         });
 
       if (handleUnsubscribe) {

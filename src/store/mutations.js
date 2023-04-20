@@ -16,6 +16,9 @@ export default {
   SET_AUTH_USER_UNSUBSCRIBE(state, unsubscribe) {
     state.authUserUnsubscribe = unsubscribe;
   },
+  SET_AUTH_OBSERVER_UNSUBSCRIBE(state, unsubscribe) {
+    state.authObserverUnsubscribe = unsubscribe;
+  },
   APPEND_POST_TO_THREAD: makeAppendChildToParentMutation({
     parent: "threads",
     child: "posts",
