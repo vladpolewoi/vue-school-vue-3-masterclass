@@ -46,10 +46,11 @@
 <script setup>
 import { reactive } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 const store = useStore();
 const router = useRouter();
+const route = useRoute();
 const emit = defineEmits(["ready"]);
 emit("ready");
 
@@ -58,16 +59,21 @@ const form = reactive({
   password: "",
 });
 
+function successRedirect() {
+  const redirectTo = route.query.redirectTo || { name: "Home" };
+  router.push(redirectTo);
+}
+
 async function signInWithGoogle() {
   await store.dispatch("signInWithGoogle");
-  router.push({ name: "Home" });
+  successRedirect();
 }
 
 function onSubmit() {
   console.log(form);
   try {
     store.dispatch("signInWithEmailAndPassword", { ...form });
-    router.push({ name: "Home" });
+    successRedirect();
   } catch (error) {
     console.log(error);
   }

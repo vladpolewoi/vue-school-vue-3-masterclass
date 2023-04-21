@@ -118,7 +118,18 @@ export default {
 
     return docToResource(newUser);
   },
-  updateUser({ commit }, user) {
+  async updateUser({ commit }, user) {
+    const updates = {
+      avatar: user.avatar || null,
+      email: user.email || null,
+      name: user.name || null,
+      username: user.username || null,
+      bio: user.bio || null,
+      website: user.website || null,
+      location: user.location || null,
+    };
+    const userRef = firebase.firestore().collection("users").doc(user.id);
+    await userRef.update(updates);
     commit("SET_ITEM", { resource: "users", item: user });
   },
   async updatePost({ commit, state }, { text, id }) {
@@ -239,6 +250,17 @@ export default {
 
   fetchPosts: ({ dispatch }, { ids }) =>
     dispatch("fetchItems", { resource: "posts", ids, emoji: "💬" }),
+
+  async fetchAuthUsersPosts({ commit, state }) {
+    const posts = await firebase
+      .firestore()
+      .collection("posts")
+      .where("userId", "==", state.authId)
+      .get();
+    posts.forEach((post) => {
+      commit("SET_ITEM", { resource: "posts", item: post });
+    });
+  },
 
   fetchThreads: ({ dispatch }, { ids }) =>
     dispatch("fetchItems", { resource: "threads", ids, emoji: "📄" }),

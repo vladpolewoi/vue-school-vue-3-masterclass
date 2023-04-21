@@ -29,6 +29,7 @@
       <div class="form-group">
         <label for="user_bio">Bio</label>
         <textarea
+          v-model="userData.bio"
           class="form-input"
           id="user_bio"
           placeholder="Write a few words about yourself."
@@ -45,30 +46,30 @@
       <div class="form-group">
         <label class="form-label" for="user_website">Website</label>
         <input
+          v-model="userData.website"
           autocomplete="off"
           class="form-input"
           id="user_website"
-          value="batman.com"
         />
       </div>
 
       <div class="form-group">
         <label class="form-label" for="user_email">Email</label>
         <input
+          v-model="userData.email"
           autocomplete="off"
           class="form-input"
           id="user_email"
-          value="joker@batmail.com"
         />
       </div>
 
       <div class="form-group">
         <label class="form-label" for="user_location">Location</label>
         <input
+          v-model="userData.location"
           autocomplete="off"
           class="form-input"
           id="user_location"
-          value="You wish!"
         />
       </div>
 

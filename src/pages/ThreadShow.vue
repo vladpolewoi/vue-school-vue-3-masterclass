@@ -4,6 +4,7 @@
       <h1>
         {{ thread.title }}
         <routerLink
+          v-if="thread.userId === authUser?.id"
           :to="{ name: 'ThreadEdit', params: { id } }"
           class="btn-green btn-small"
           tag="button"
@@ -23,7 +24,18 @@
       </p>
 
       <PostList :posts="threadPosts" />
-      <PostEditor @save-post="onSavePost" />
+      <PostEditor v-if="authUser" @save-post="onSavePost" />
+      <div v-else class="text-center" style="margin-bottom: 50px">
+        <router-link :to="{ name: 'Login', query: { redirectTo: route.path } }"
+          >Sign In</router-link
+        >
+        or
+        <router-link
+          :to="{ name: 'Register', query: { redirectTo: route.path } }"
+          >Register</router-link
+        >
+        to reply
+      </div>
     </div>
   </div>
 </template>
@@ -31,6 +43,7 @@
 <script setup>
 import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import AppDate from "@/components/AppDate.vue";
 import PostList from "@/components/PostList.vue";
 import PostEditor from "@/components/PostEditor.vue";
@@ -43,6 +56,7 @@ const props = defineProps({
   },
 });
 const store = useStore();
+const route = useRoute();
 const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
@@ -53,6 +67,7 @@ const threadPosts = computed(() => {
     (post) => post && post.threadId === thread.value.id
   );
 });
+const authUser = computed(() => store.getters.getAuthUser);
 
 const onSavePost = ({ post }) => {
   const payload = {
