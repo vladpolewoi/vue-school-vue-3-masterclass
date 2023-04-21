@@ -52,7 +52,7 @@ defineProps({
 });
 const store = useStore();
 
-const users = computed(() => store.state.users);
+const users = computed(() => store.state.users.items);
 
 const userById = (userId) => users.value.find((p) => p.id === userId) || {};
 </script>

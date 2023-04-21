@@ -82,12 +82,12 @@ const form = reactive({
 });
 
 async function onRegister() {
-  await store.dispatch("registerUserWithEmailAndPassword", form);
+  await store.dispatch("auth/registerUserWithEmailAndPassword", form);
   router.push("/");
 }
 
 async function onRegisterWithGoogle() {
-  await store.dispatch("signInWithGoogle");
+  await store.dispatch("auth/signInWithGoogle");
   router.push("/");
 }
 </script>

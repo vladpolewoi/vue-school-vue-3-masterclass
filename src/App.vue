@@ -29,7 +29,7 @@ router.beforeEach(() => {
   showPage.value = false;
 });
 
-store.dispatch("fetchAuthUser");
+store.dispatch("auth/fetchAuthUser");
 </script>
 
 <style>

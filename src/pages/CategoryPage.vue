@@ -27,17 +27,21 @@ const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 const category = computed(() =>
-  store.state.categories.find((category) => category.id === props.id)
+  store.state.categories.items.find((category) => category.id === props.id)
 );
 
 const getForumsForCategory = (category) => {
-  return store.state.forums.filter((forum) => forum.categoryId === category.id);
+  return store.state.forums.items.filter(
+    (forum) => forum.categoryId === category.id
+  );
 };
 
 onMounted(async () => {
-  const categoryData = await store.dispatch("fetchCategory", { id: props.id });
+  const categoryData = await store.dispatch("categories/fetchCategory", {
+    id: props.id,
+  });
 
-  await store.dispatch("fetchForums", {
+  await store.dispatch("forums/fetchForums", {
     ids: categoryData.forums,
   });
   fetched();

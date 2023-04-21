@@ -65,14 +65,13 @@ function successRedirect() {
 }
 
 async function signInWithGoogle() {
-  await store.dispatch("signInWithGoogle");
+  await store.dispatch("auth/signInWithGoogle");
   successRedirect();
 }
 
 function onSubmit() {
-  console.log(form);
   try {
-    store.dispatch("signInWithEmailAndPassword", { ...form });
+    store.dispatch("auth/signInWithEmailAndPassword", { ...form });
     successRedirect();
   } catch (error) {
     console.log(error);

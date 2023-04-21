@@ -68,15 +68,14 @@ defineProps({
 const store = useStore();
 const editing = ref(null);
 
-const userById = (userId) => store.getters.user(userId);
+const userById = (userId) => store.getters["users/user"](userId);
 
 function toggleEditMode(postId) {
   editing.value = postId === editing.value ? null : postId;
 }
 
 function handleUpdate(event) {
-  store.dispatch("updatePost", event.post);
+  store.dispatch("posts/updatePost", event.post);
   editing.value = null;
-  // store.dispatch("updatePost", post);
 }
 </script>

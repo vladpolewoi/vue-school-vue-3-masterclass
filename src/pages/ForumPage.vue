@@ -39,19 +39,19 @@ const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 const forum = computed(() =>
-  store.state.forums?.find((el) => el.id === props.id)
+  store.state.forums.items?.find((el) => el.id === props.id)
 );
 const threads = computed(() =>
   forum.value?.threads
-    ?.map((threadId) => store.getters.thread(threadId))
+    ?.map((threadId) => store.getters["threads/thread"](threadId))
     .filter(Boolean)
 );
 onMounted(async () => {
-  const forumData = await store.dispatch("fetchForum", { id: props.id });
-  const threadsData = await store.dispatch("fetchThreads", {
+  const forumData = await store.dispatch("forums/fetchForum", { id: props.id });
+  const threadsData = await store.dispatch("threads/fetchThreads", {
     ids: forumData.threads,
   });
-  await store.dispatch("fetchUsers", {
+  await store.dispatch("users/fetchUsers", {
     ids: threadsData.map((thread) => thread.userId),
   });
   fetched();

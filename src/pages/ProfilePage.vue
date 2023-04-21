@@ -29,11 +29,11 @@ import asyncDataStatus from "@/composables/asyncDataStatus";
 
 const emit = defineEmits(["ready"]);
 const store = useStore();
-const user = computed(() => store.getters["getAuthUser"]);
+const user = computed(() => store.getters["auth/getAuthUser"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 onBeforeMount(async () => {
-  await store.dispatch("fetchAuthUsersPosts");
+  await store.dispatch("auth/fetchAuthUsersPosts");
   fetched();
 });
 

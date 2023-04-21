@@ -83,12 +83,11 @@ import { computed, ref } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-const user = computed(() => store.getters["getAuthUser"]);
-
+const user = computed(() => store.getters["auth/getAuthUser"]);
 const isUserDropdownOpen = ref(false);
 
 function onSignOut() {
-  store.dispatch("signOut");
+  store.dispatch("auth/signOut");
 }
 </script>
 

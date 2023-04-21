@@ -29,11 +29,11 @@ const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 const forum = computed(() =>
-  store.state.forums.find((forum) => forum.id === props.forumId)
+  store.state.forums.items.find((forum) => forum.id === props.forumId)
 );
 
 const save = async ({ title, text }) => {
-  const thread = await store.dispatch("createThread", {
+  const thread = await store.dispatch("threads/createThread", {
     forumId: forum.value.id,
     title,
     text,
@@ -46,7 +46,7 @@ const cancel = () => {
 };
 
 onBeforeMount(async () => {
-  await store.dispatch("fetchForum", { id: props.forumId });
+  await store.dispatch("forums/fetchForum", { id: props.forumId });
   fetched();
 });
 </script>

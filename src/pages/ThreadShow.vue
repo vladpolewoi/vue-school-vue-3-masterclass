@@ -60,14 +60,14 @@ const route = useRoute();
 const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
-const posts = computed(() => store.state.posts);
-const thread = computed(() => store.getters.thread(props.id));
+const posts = computed(() => store.state.posts.items);
+const thread = computed(() => store.getters["threads/thread"](props.id));
 const threadPosts = computed(() => {
   return posts.value.filter(
     (post) => post && post.threadId === thread.value.id
   );
 });
-const authUser = computed(() => store.getters.getAuthUser);
+const authUser = computed(() => store.getters["auth/getAuthUser"]);
 
 const onSavePost = ({ post }) => {
   const payload = {
@@ -75,22 +75,20 @@ const onSavePost = ({ post }) => {
     threadId: thread.value.id,
   };
 
-  store.dispatch("createPost", payload);
+  store.dispatch("posts/createPost", payload);
 };
 
 onMounted(async () => {
   // fetch thread
-  const thread = await store.dispatch("fetchThread", { id: props.id });
+  const thread = await store.dispatch("threads/fetchThread", { id: props.id });
 
   // fetch user
-  store.dispatch("fetchUser", { id: thread.userId });
+  store.dispatch("users/fetchUser", { id: thread.userId });
 
   // fetch the posts in thred.posts
-  const posts = await store.dispatch("fetchPosts", { ids: thread.posts });
-  const users = posts.map((post) => post.userId);
-  await store.dispatch("fetchUsers", { ids: users });
+  const posts = await store.dispatch("posts/fetchPosts", { ids: thread.posts });
+  const users = posts?.map((post) => post.userId);
+  await store.dispatch("users/fetchUsers", { ids: users });
   fetched();
 });
 </script>
-
-<style lang="scss" scoped></style>

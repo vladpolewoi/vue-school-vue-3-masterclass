@@ -15,14 +15,14 @@ import CategoryList from "@/components/CategoryList.vue";
 
 // Vuex
 const store = useStore();
-const categories = computed(() => store.state.categories);
+const categories = computed(() => store.state.categories.items);
 const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 onBeforeMount(async () => {
-  const categoriesData = await store.dispatch("fetchAllCategories");
+  const categoriesData = await store.dispatch("categories/fetchAllCategories");
   const forumsIds = categoriesData.flatMap((category) => category.forums);
-  await store.dispatch("fetchForums", { ids: forumsIds });
+  await store.dispatch("forums/fetchForums", { ids: forumsIds });
   fetched();
 });
 

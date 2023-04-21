@@ -2,18 +2,24 @@ import { createStore } from "vuex";
 import getters from "@/store/getters";
 import actions from "@/store/actions";
 import mutations from "@/store/mutations";
+import categories from "@/store/modules/categories";
+import forums from "@/store/modules/forums";
+import threads from "@/store/modules/threads";
+import users from "@/store/modules/users";
+import auth from "@/store/modules/auth";
+import posts from "@/store/modules/posts";
 
 export default createStore({
+  modules: {
+    categories,
+    forums,
+    threads,
+    users,
+    posts,
+    auth,
+  },
   state: {
-    forums: [],
-    users: [],
-    posts: [],
-    threads: [],
-    categories: [],
-    authId: null,
     unsubscribes: [],
-    authUserUnsubscribe: null,
-    authObserverUnsubscribe: null,
   },
   getters,
   actions,

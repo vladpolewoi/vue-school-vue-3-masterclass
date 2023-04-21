@@ -97,7 +97,7 @@ const router = useRouter();
 const userData = reactive(JSON.parse(JSON.stringify(props.user)));
 
 const save = () => {
-  store.dispatch("updateUser", { ...userData });
+  store.dispatch("users/updateUser", { ...userData });
   router.push({ name: "Profile" });
 };
 

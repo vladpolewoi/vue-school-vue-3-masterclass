@@ -34,15 +34,16 @@ const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
 const thread = computed(() =>
-  store.state.threads.find((thread) => thread.id === props.id)
+  store.state.threads.items.find((thread) => thread.id === props.id)
 );
 const text = computed(
   () =>
-    store.state.posts.find((post) => post.id === thread.value.posts[0])?.text
+    store.state.posts.items.find((post) => post.id === thread.value.posts[0])
+      ?.text
 );
 
 const save = async ({ title, text }) => {
-  const thread = await store.dispatch("updateThread", {
+  const thread = await store.dispatch("threads/updateThread", {
     id: props.id,
     title,
     text,
@@ -55,8 +56,10 @@ const cancel = () => {
 };
 
 onMounted(async () => {
-  const threadData = await store.dispatch("fetchThread", { id: props.id });
-  await store.dispatch("fetchPost", { id: threadData.posts[0] });
+  const threadData = await store.dispatch("threads/fetchThread", {
+    id: props.id,
+  });
+  await store.dispatch("posts/fetchPost", { id: threadData.posts[0] });
   fetched();
 });
 </script>
