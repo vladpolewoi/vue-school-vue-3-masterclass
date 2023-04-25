@@ -1,4 +1,4 @@
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
 
 export default {
   namespaced: true,
@@ -98,12 +98,24 @@ export default {
       );
       commit("SET_AUTH_ID", userId);
     },
-    async fetchAuthUsersPosts({ commit, state }) {
-      const posts = await firebase
+    async fetchAuthUsersPosts({ commit, state }, { startAfter }) {
+      let query = firebase
         .firestore()
         .collection("posts")
         .where("userId", "==", state.authId)
-        .get();
+        .orderBy("publishedAt", "desc")
+        .limit(3);
+
+      if (startAfter) {
+        const doc = await firebase
+          .firestore()
+          .collection("posts")
+          .doc(startAfter.id)
+          .get();
+        query = query.startAfter(doc);
+      }
+
+      const posts = await query.get();
       posts.forEach((post) => {
         commit("SET_ITEM", { resource: "posts", item: post }, { root: true });
       });

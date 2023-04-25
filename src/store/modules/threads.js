@@ -1,4 +1,6 @@
-import firebase from "firebase/compat";
+import firebase from "firebase/compat/app";
+import chunk from "lodash/chunk";
+
 import {
   findById,
   docToResource,
@@ -137,6 +139,11 @@ export default {
         { resource: "threads", ids, emoji: "📄" },
         { root: true }
       ),
+    fetchThreadsByPage({ dispatch, commit }, { ids, page, perPage = 10 }) {
+      commit("CLEAR_THREADS");
+      const chunkedIds = chunk(ids, perPage)[page - 1];
+      return dispatch("fetchThreads", { ids: chunkedIds });
+    },
   },
   mutations: {
     APPEND_POST_TO_THREAD: makeAppendChildToParentMutation({
@@ -147,5 +154,8 @@ export default {
       parent: "threads",
       child: "contributors",
     }),
+    CLEAR_THREADS(state) {
+      state.items = [];
+    },
   },
 };

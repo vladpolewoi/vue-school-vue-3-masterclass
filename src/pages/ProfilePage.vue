@@ -14,6 +14,10 @@
 
         <hr />
         <PostList :posts="user.posts" />
+        <AppInfinteScroll
+          :done="user.posts.length === user.postsCount"
+          @load="loadMore"
+        />
       </div>
     </div>
   </div>
@@ -26,21 +30,34 @@ import PostList from "@/components/PostList.vue";
 import UserProfileCard from "@/components/UserProfileCard.vue";
 import UserProfileCardEditor from "@/components/UserProfileCardEditor.vue";
 import asyncDataStatus from "@/composables/asyncDataStatus";
+import AppInfinteScroll from "@/components/AppInfiniteScroll.vue";
 
 const emit = defineEmits(["ready"]);
 const store = useStore();
 const user = computed(() => store.getters["auth/getAuthUser"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
-onBeforeMount(async () => {
-  await store.dispatch("auth/fetchAuthUsersPosts");
-  fetched();
-});
-
 defineProps({
   edit: {
     type: Boolean,
     default: false,
   },
+});
+
+const lastPostFetched = computed(() => {
+  return user.value.posts.length === 0
+    ? null
+    : user.value.posts[user.value.posts.length - 1];
+});
+
+async function loadMore() {
+  return store.dispatch("auth/fetchAuthUsersPosts", {
+    startAfter: lastPostFetched.value,
+  });
+}
+
+onBeforeMount(async () => {
+  await loadMore();
+  fetched();
 });
 </script>
