@@ -49,7 +49,10 @@ const router = createRouter({
       component: ThreadShow,
       props: true,
       async beforeEnter(to, from, next) {
-        await store.dispatch("threads/fetchThread", { id: to.params.id });
+        await store.dispatch("threads/fetchThread", {
+          id: to.params.id,
+          once: true,
+        });
         const isThread = findById(store.state.threads.items, to.params.id);
 
         if (isThread) {

@@ -44,10 +44,12 @@
 import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
+import { difference } from "lodash";
 import AppDate from "@/components/AppDate.vue";
 import PostList from "@/components/PostList.vue";
 import PostEditor from "@/components/PostEditor.vue";
 import asyncDataStatus from "@/composables/asyncDataStatus";
+import useNotifications from "@/composables/useNotifications";
 
 const props = defineProps({
   id: {
@@ -57,6 +59,7 @@ const props = defineProps({
 });
 const store = useStore();
 const route = useRoute();
+const { addNotification } = useNotifications();
 const emit = defineEmits(["ready"]);
 const { ready, fetched } = asyncDataStatus(emit);
 
@@ -78,17 +81,47 @@ const onSavePost = ({ post }) => {
   store.dispatch("posts/createPost", payload);
 };
 
+async function fetchPostsWithUsers(ids) {
+  // fetch the posts in thred.posts
+
+  const posts = await store.dispatch("posts/fetchPosts", {
+    ids,
+    onSnapshot: ({ isLocal, previousItem }) => {
+      if (
+        !ready.value ||
+        isLocal ||
+        (previousItem?.edited && !previousItem?.edited?.at)
+      )
+        return;
+
+      addNotification({ message: "Thread updated", timeout: 2000 });
+    },
+  });
+  const users = posts?.map((post) => post.userId).concat(thread.value.userId);
+  await store.dispatch("users/fetchUsers", { ids: users });
+}
+
 onMounted(async () => {
   // fetch thread
-  const thread = await store.dispatch("threads/fetchThread", { id: props.id });
+  const thread = await store.dispatch("threads/fetchThread", {
+    id: props.id,
+    onSnapshot: ({ isLocal, item, previousItem }) => {
+      if (!isLocal && ready.value) {
+        const newPostsIds = difference(item.posts, previousItem.posts);
+        console.log("SASD", newPostsIds);
+
+        if (newPostsIds.length === 0) {
+          addNotification({ message: "Thread updated", timeout: 2000 });
+        } else {
+          fetchPostsWithUsers(newPostsIds);
+        }
+      }
+    },
+  });
 
   // fetch user
-  store.dispatch("users/fetchUser", { id: thread.userId });
-
-  // fetch the posts in thred.posts
-  const posts = await store.dispatch("posts/fetchPosts", { ids: thread.posts });
-  const users = posts?.map((post) => post.userId);
-  await store.dispatch("users/fetchUsers", { ids: users });
+  // store.dispatch("users/fetchUser", { id: thread.userId });
+  await fetchPostsWithUsers(thread.posts);
   fetched();
 });
 </script>

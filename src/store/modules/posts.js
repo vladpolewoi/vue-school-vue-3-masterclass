@@ -1,5 +1,9 @@
 import firebase from "firebase/compat/app";
-import { docToResource } from "@/helpers";
+import {
+  docToResource,
+  makeFetchItemAction,
+  makeFetchItemsAction,
+} from "@/helpers";
 
 export default {
   namespaced: true,
@@ -37,12 +41,11 @@ export default {
       await batch.commit();
 
       const newPost = await postRef.get();
-
       commit(
         "SET_ITEM",
         {
           resource: "posts",
-          item: { ...payload, id: newPost.id },
+          item: { ...newPost.data(), id: newPost.id },
         },
         { root: true }
       );
@@ -85,18 +88,8 @@ export default {
         { root: true }
       );
     },
-    fetchPost: ({ dispatch }, { id }) =>
-      dispatch(
-        "fetchItem",
-        { resource: "posts", id, emoji: "💬" },
-        { root: true }
-      ),
-    fetchPosts: ({ dispatch }, { ids }) =>
-      dispatch(
-        "fetchItems",
-        { resource: "posts", ids, emoji: "💬" },
-        { root: true }
-      ),
+    fetchPost: makeFetchItemAction({ resource: "posts", emoji: "💬" }),
+    fetchPosts: makeFetchItemsAction({ resource: "posts", emoji: "💬" }),
   },
   mutations: {},
 };

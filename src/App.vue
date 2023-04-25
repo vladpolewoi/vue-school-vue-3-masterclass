@@ -8,11 +8,13 @@
     />
     <AppSpinner v-show="!showPage" />
   </div>
+  <AppNotifications />
 </template>
 <script setup>
 import TheNavbar from "@/components/TheNavbar.vue";
 import AppSpinner from "./components/AppSpinner.vue";
 import NProgress from "nprogress";
+import AppNotifications from "@/components/AppNotifications.vue";
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";

@@ -35,3 +35,13 @@ export const makeAppendChildToParentMutation = ({ parent, child }) => {
     }
   };
 };
+
+export const makeFetchItemAction = ({ resource, emoji }) => {
+  return ({ dispatch }, payload) =>
+    dispatch("fetchItem", { resource, emoji, ...payload }, { root: true });
+};
+
+export const makeFetchItemsAction = ({ resource, emoji }) => {
+  return ({ dispatch }, payload) =>
+    dispatch("fetchItems", { resource, emoji, ...payload }, { root: true });
+};

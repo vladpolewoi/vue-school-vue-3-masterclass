@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app";
 import chunk from "lodash/chunk";
+import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 
 import {
   findById,
@@ -127,18 +128,8 @@ export default {
 
       return docToResource(newThread);
     },
-    fetchThread: ({ dispatch }, { id }) =>
-      dispatch(
-        "fetchItem",
-        { resource: "threads", id, emoji: "📄" },
-        { root: true }
-      ),
-    fetchThreads: ({ dispatch }, { ids }) =>
-      dispatch(
-        "fetchItems",
-        { resource: "threads", ids, emoji: "📄" },
-        { root: true }
-      ),
+    fetchThread: makeFetchItemAction({ emoji: "📄", resource: "threads" }),
+    fetchThreads: makeFetchItemsAction({ emoji: "📄", resource: "threads" }),
     fetchThreadsByPage({ dispatch, commit }, { ids, page, perPage = 10 }) {
       commit("CLEAR_THREADS");
       const chunkedIds = chunk(ids, perPage)[page - 1];

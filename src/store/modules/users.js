@@ -1,4 +1,5 @@
 import firebase from "firebase/compat/app";
+import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 
 import {
   findById,
@@ -78,18 +79,8 @@ export default {
       commit("SET_ITEM", { resource: "users", item: user }, { root: true });
     },
 
-    fetchUser: ({ dispatch }, { id }) =>
-      dispatch(
-        "fetchItem",
-        { resource: "users", id, emoji: "👤" },
-        { root: true }
-      ),
-    fetchUsers: ({ dispatch }, { ids }) =>
-      dispatch(
-        "fetchItems",
-        { resource: "users", ids, emoji: "👤" },
-        { root: true }
-      ),
+    fetchUser: makeFetchItemAction({ resource: "users", emoji: "🙋‍♂️" }),
+    fetchUsers: makeFetchItemsAction({ resource: "users", emoji: "🙋‍♂️" }),
   },
   mutations: {
     APPEND_THREAD_TO_USER: makeAppendChildToParentMutation({

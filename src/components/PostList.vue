@@ -35,7 +35,7 @@
           </p>
         </div>
         <a
-          v-if="post.userId === store.state.authId"
+          v-if="post.userId === store.state.auth.authId"
           href="#"
           style="margin-left: auto; padding-left: 10px"
           class="link-unstyled"
