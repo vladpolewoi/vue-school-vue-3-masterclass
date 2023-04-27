@@ -7,10 +7,9 @@
         }}</a>
 
         <a href="profile.html#profile-details">
-          <img
+          <AppAvatarImage
             class="avatar-large"
             :src="userById(post.userId).avatar"
-            alt=""
           />
         </a>
 

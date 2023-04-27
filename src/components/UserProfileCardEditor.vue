@@ -1,13 +1,32 @@
 <template>
   <div class="profile-card">
     <form @submit.prevent="save">
-      <p class="text-center">
-        <img
-          :src="user.avatar"
-          :alt="`${user.name} profile picture`"
-          class="avatar-xlarge img-update"
-        />
+      <p class="text-center avatar-edit">
+        <label for="avatar">
+          <AppAvatarImage
+            :src="userData.avatar"
+            class="avatar-xlarge img-update"
+          />
+          <div class="avatar-upload-overlay">
+            <AppSpinner v-if="isUploadingImage" color="white" />
+            <fa
+              v-else
+              icon="camera"
+              size="3x"
+              :style="{ color: 'white', opacity: '8' }"
+            />
+          </div>
+          <input
+            v-show="false"
+            type="file"
+            id="avatar"
+            accept="image/*"
+            @change="onAvatarChange"
+          />
+        </label>
       </p>
+      <UserProfileCardEditorRandomAvatar @hit="userData.avatar = $event" />
+
       <div class="form-group">
         <input
           v-model="userData.username"
@@ -74,7 +93,7 @@
       </div>
 
       <div class="btn-group space-between">
-        <button class="btn-ghost" @click="cancel">Cancel</button>
+        <button class="btn-ghost" @click.prevent="cancel">Cancel</button>
         <button type="submit" class="btn-blue">Save</button>
       </div>
     </form>
@@ -82,9 +101,10 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import UserProfileCardEditorRandomAvatar from "@/components/UserProfileCardEditorRandomAvatar.vue";
 
 const props = defineProps({
   user: {
@@ -95,8 +115,10 @@ const props = defineProps({
 const store = useStore();
 const router = useRouter();
 const userData = reactive(JSON.parse(JSON.stringify(props.user)));
+const isUploadingImage = ref(false);
 
-const save = () => {
+const save = async () => {
+  await handleRandomAvatarUpload();
   store.dispatch("users/updateUser", { ...userData });
   router.push({ name: "Profile" });
 };
@@ -104,6 +126,30 @@ const save = () => {
 const cancel = () => {
   router.push({ name: "Profile" });
 };
+
+async function onAvatarChange(e) {
+  isUploadingImage.value = true;
+
+  const file = e.target.files[0];
+  const uploadedImage = await store.dispatch("auth/uploadAvatar", { file });
+
+  userData.avatar = uploadedImage || userData.avatar;
+
+  isUploadingImage.value = false;
+}
+
+async function handleRandomAvatarUpload() {
+  const randomAvatarGenerated = userData.avatar.startsWith("https://pixabay");
+
+  if (randomAvatarGenerated) {
+    const image = await fetch(userData.avatar);
+    const blob = await image.blob();
+    userData.avatar = await store.dispatch("auth/uploadAvatar", {
+      file: blob,
+      filename: "random",
+    });
+  }
+}
 </script>
 
 <style lang="scss" scoped></style>

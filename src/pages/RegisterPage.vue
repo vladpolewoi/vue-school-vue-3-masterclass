@@ -40,12 +40,23 @@
         </div>
 
         <div class="form-group">
-          <label for="avatar">Avatar</label>
+          <label for="avatar"
+            >Avatar
+            <div v-if="avatarPreview">
+              <img
+                :src="avatarPreview"
+                alt="avatarPreview"
+                class="avatar-xlarge"
+              />
+            </div>
+          </label>
           <input
-            v-model="form.avatar"
+            v-show="!avatarPreview"
             id="avatar"
-            type="text"
+            type="file"
             class="form-input"
+            accept="image/*"
+            @change="onAvatarChange"
           />
         </div>
 
@@ -63,7 +74,7 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -80,6 +91,7 @@ const form = reactive({
   password: "",
   avatar: "",
 });
+const avatarPreview = ref(null);
 
 async function onRegister() {
   await store.dispatch("auth/registerUserWithEmailAndPassword", form);
@@ -89,5 +101,12 @@ async function onRegister() {
 async function onRegisterWithGoogle() {
   await store.dispatch("auth/signInWithGoogle");
   router.push("/");
+}
+
+function onAvatarChange(e) {
+  form.avatar = e.target.files[0];
+  const reader = new FileReader();
+  reader.onload = (e) => (avatarPreview.value = e.target.result);
+  reader.readAsDataURL(form.avatar);
 }
 </script>

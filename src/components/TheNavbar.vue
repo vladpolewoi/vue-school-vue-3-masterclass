@@ -22,11 +22,7 @@
             @click.prevent="isUserDropdownOpen = !isUserDropdownOpen"
             v-click-outside="() => (isUserDropdownOpen = false)"
           >
-            <img
-              class="avatar-small"
-              :src="user.avatar"
-              :alt="`${user.name} profile picture`"
-            />
+            <AppAvatarImage class="avatar-small" :src="user.avatar" />
             <span>
               {{ user.name }}
               <img

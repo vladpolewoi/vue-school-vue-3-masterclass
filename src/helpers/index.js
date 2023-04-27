@@ -45,3 +45,7 @@ export const makeFetchItemsAction = ({ resource, emoji }) => {
   return ({ dispatch }, payload) =>
     dispatch("fetchItems", { resource, emoji, ...payload }, { root: true });
 };
+
+export const arrayRandom = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
+};

@@ -5,13 +5,21 @@
 <script>
 export default {
   name: "AppSpinner",
+  props: {
+    color: { type: String, default: "#263959" },
+  },
+  data() {
+    return {
+      spinnerColor: this.color,
+    };
+  },
 };
 </script>
 <style>
 .spinner {
   width: 40px;
   height: 40px;
-  background-color: #333;
+  background-color: v-bind(spinnerColor);
 
   margin: 100px auto;
   -webkit-animation: sk-rotateplane 1.2s infinite ease-in-out;
