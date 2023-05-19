@@ -12,6 +12,7 @@ import FontAwesome from "@/plugins/FontAwesome.js";
 import ClickOutsideDirective from "@/plugins/ClickOutsideDirective.js";
 import PageScrollDirective from "@/plugins/PageScrollDirective.js";
 import Vue3Pagination from "@/plugins/Vue3Pagination";
+import VeeValidatePlugin from "./plugins/VeeValidatePlugin";
 
 firebase.initializeApp(firebaseConfig);
 
@@ -24,6 +25,7 @@ app.use(FontAwesome);
 app.use(ClickOutsideDirective);
 app.use(PageScrollDirective);
 app.use(Vue3Pagination);
+app.use(VeeValidatePlugin);
 
 // register global components
 const components = import.meta.globEager("./components/*.vue");

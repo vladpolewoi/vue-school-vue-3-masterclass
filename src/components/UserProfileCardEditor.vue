@@ -1,6 +1,6 @@
 <template>
   <div class="profile-card">
-    <form @submit.prevent="save">
+    <VeeForm @submit="save">
       <p class="text-center avatar-edit">
         <label for="avatar">
           <AppAvatarImage
@@ -27,33 +27,29 @@
       </p>
       <UserProfileCardEditorRandomAvatar @hit="userData.avatar = $event" />
 
-      <div class="form-group">
-        <input
-          v-model="userData.username"
-          type="text"
-          placeholder="Username"
-          class="form-input text-lead text-bold"
-        />
-      </div>
+      <AppFormField
+        v-model="userData.username"
+        name="username"
+        rules="required"
+        label="Username"
+        placeholder="Username"
+      />
 
-      <div class="form-group">
-        <input
-          v-model="userData.name"
-          type="text"
-          placeholder="Full Name"
-          class="form-input text-lead"
-        />
-      </div>
+      <AppFormField
+        v-model="userData.name"
+        name="name"
+        label="Name"
+        rules="required"
+        placeholder="Full Name"
+      />
 
-      <div class="form-group">
-        <label for="user_bio">Bio</label>
-        <textarea
-          v-model="userData.bio"
-          class="form-input"
-          id="user_bio"
-          placeholder="Write a few words about yourself."
-        ></textarea>
-      </div>
+      <AppFormField
+        v-model="userData.bio"
+        name="bio"
+        label="Bio"
+        placeholder="Write a few words about yourself."
+        as="textarea"
+      />
 
       <div class="stats">
         <span>{{ user.postsCount }} posts</span>
@@ -62,49 +58,51 @@
 
       <hr />
 
-      <div class="form-group">
-        <label class="form-label" for="user_website">Website</label>
-        <input
-          v-model="userData.website"
-          autocomplete="off"
-          class="form-input"
-          id="user_website"
-        />
-      </div>
+      <AppFormField
+        v-model="userData.website"
+        name="website"
+        label="Website"
+        placeholder="Website"
+      />
 
-      <div class="form-group">
-        <label class="form-label" for="user_email">Email</label>
-        <input
-          v-model="userData.email"
-          autocomplete="off"
-          class="form-input"
-          id="user_email"
-        />
-      </div>
+      <AppFormField
+        v-model="userData.email"
+        name="email"
+        label="Email"
+        placeholder="Email"
+        rules="email|required"
+      />
 
-      <div class="form-group">
-        <label class="form-label" for="user_location">Location</label>
-        <input
-          v-model="userData.location"
-          autocomplete="off"
-          class="form-input"
-          id="user_location"
+      <AppFormField
+        v-model="userData.location"
+        name="location"
+        label="Location"
+        placeholder="Location"
+        list="locations"
+        @mouseenter.once="onMouseEnterLocations"
+      />
+      <datalist id="locations">
+        <option
+          v-for="country in locationCountries"
+          :key="country.name.common"
+          :value="country.name.common"
         />
-      </div>
+      </datalist>
 
       <div class="btn-group space-between">
         <button class="btn-ghost" @click.prevent="cancel">Cancel</button>
         <button type="submit" class="btn-blue">Save</button>
       </div>
-    </form>
+    </VeeForm>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import UserProfileCardEditorRandomAvatar from "@/components/UserProfileCardEditorRandomAvatar.vue";
+import AppFormField from "./AppFormField.vue";
 
 const props = defineProps({
   user: {
@@ -149,6 +147,18 @@ async function handleRandomAvatarUpload() {
       filename: "random",
     });
   }
+}
+
+// Location Options
+const locationCountries = ref([]);
+
+async function loadLocationOptions() {
+  const response = await fetch("https://restcountries.com/v3/all");
+  locationCountries.value = await response.json();
+}
+
+function onMouseEnterLocations() {
+  loadLocationOptions();
 }
 </script>
 

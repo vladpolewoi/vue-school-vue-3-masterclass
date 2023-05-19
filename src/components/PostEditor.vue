@@ -1,17 +1,14 @@
 <template>
   <div class="col-full">
-    <form @submit.prevent="save">
-      <div class="form-group">
-        <label for="thread_content">Content:</label>
-        <textarea
-          id="thread_content"
-          class="form-input"
-          name="content"
-          rows="8"
-          cols="140"
-          v-model="postCopy.text"
-        ></textarea>
-      </div>
+    <VeeForm @submit="save" :key="formKey">
+      <AppFormField
+        v-model="postCopy.text"
+        name="text"
+        rules="required"
+        as="textarea"
+        rows="8"
+        cols="140"
+      />
 
       <div class="btn-group">
         <button class="btn btn-ghost">Cancel</button>
@@ -19,12 +16,12 @@
           {{ post.id ? "Update Post" : "Submit Post" }}
         </button>
       </div>
-    </form>
+    </VeeForm>
   </div>
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 const props = defineProps({
   post: {
     type: Object,
@@ -35,11 +32,13 @@ const props = defineProps({
 });
 const emit = defineEmits(["save-post"]);
 const postCopy = reactive({ ...props.post });
+const formKey = ref(Math.random());
 
 const save = () => {
   emit("save-post", { post: postCopy });
 
   postCopy.text = "";
+  formKey.value = Math.random();
 };
 </script>
 

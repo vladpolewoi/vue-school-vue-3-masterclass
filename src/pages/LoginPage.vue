@@ -1,27 +1,23 @@
 <template>
   <div class="flex-grid justify-center">
     <div class="col-2">
-      <form @submit.prevent="onSubmit" action="" class="card card-form">
+      <VeeForm @submit="onSubmit" class="card card-form">
         <h1 class="text-center">Login</h1>
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            type="text"
-            class="form-input"
-            v-model="form.email"
-          />
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            class="form-input"
-            v-model="form.password"
-          />
-        </div>
+        <AppFormField
+          v-model="form.email"
+          name="email"
+          label="Email"
+          rules="required|email"
+        />
+
+        <AppFormField
+          v-model="form.password"
+          name="password"
+          label="Password"
+          type="password"
+          rules="required|min:6"
+        />
 
         <div class="push-top">
           <button type="submit" class="btn-blue btn-block">Log in</button>
@@ -32,7 +28,7 @@
             >Create an account?</router-link
           >
         </div>
-      </form>
+      </VeeForm>
 
       <div class="push-top text-center">
         <button @click="signInWithGoogle" class="btn-red btn-xsmall">
@@ -47,7 +43,7 @@
 import { reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
-
+import AppFormField from "../components/AppFormField.vue";
 const store = useStore();
 const router = useRouter();
 const route = useRoute();

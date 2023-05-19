@@ -1,43 +1,37 @@
 <template>
   <div class="flex-grid justify-center">
     <div class="col-2">
-      <form @submit.prevent="onRegister" action="" class="card card-form">
+      <VeeForm @submit="onRegister" class="card card-form">
         <h1 class="text-center">Register</h1>
 
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input v-model="form.name" id="name" type="text" class="form-input" />
-        </div>
+        <AppFormField
+          v-model="form.name"
+          name="name"
+          label="Full Name"
+          rules="required"
+        />
 
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input
-            v-model="form.username"
-            id="username"
-            type="text"
-            class="form-input"
-          />
-        </div>
+        <AppFormField
+          v-model="form.username"
+          name="username"
+          label="Username"
+          rules="required|unique:users,username"
+        />
 
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            v-model="form.email"
-            id="email"
-            type="email"
-            class="form-input"
-          />
-        </div>
+        <AppFormField
+          v-model="form.email"
+          name="email"
+          label="Email"
+          rules="required|email|unique:users,email"
+        />
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            v-model="form.password"
-            id="password"
-            type="password"
-            class="form-input"
-          />
-        </div>
+        <AppFormField
+          v-model="form.password"
+          name="password"
+          label="Password"
+          type="password"
+          rules="required|min:6"
+        />
 
         <div class="form-group">
           <label for="avatar"
@@ -50,8 +44,9 @@
               />
             </div>
           </label>
-          <input
+          <VeeField
             v-show="!avatarPreview"
+            name="avatar"
             id="avatar"
             type="file"
             class="form-input"
@@ -63,7 +58,7 @@
         <div class="form-actions">
           <button type="submit" class="btn-blue btn-block">Register</button>
         </div>
-      </form>
+      </VeeForm>
       <div class="text-center push-top">
         <button @click="onRegisterWithGoogle" class="btn-red btn-xsmall">
           <i class="fa fa-google fa-btn"></i>Sign up with Google
@@ -77,7 +72,7 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-
+import AppFormField from "../components/AppFormField.vue";
 const emit = defineEmits(["ready"]);
 emit("ready");
 
