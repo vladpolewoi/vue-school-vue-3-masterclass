@@ -118,6 +118,12 @@ const router = createRouter({
   },
 });
 
+router.afterEach(() => {
+  store.dispatch("clearItems", {
+    modules: ["categories", "forums", "threads", "posts"],
+  });
+});
+
 router.beforeEach(async (to) => {
   await store.dispatch("auth/initAuthentication");
   store.dispatch("unsubscribeAllSnapshots");

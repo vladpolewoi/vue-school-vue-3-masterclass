@@ -10,4 +10,9 @@ export default {
   CLEAR_ALL_UNSUBSCRIBES(state) {
     state.unsubscribes = [];
   },
+  CLEAR_ITEMS(state, { modules = [] }) {
+    modules.forEach((module) => {
+      state[module].items = [];
+    });
+  },
 };

@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <div class="col-full push-top" v-if="threads?.length">
+    <div class="col-full push-top">
       <ThreadList :threads="threads" />
       <v-pagination
         v-model="page"
@@ -57,7 +57,7 @@ const threads = computed(() =>
 );
 
 const perPage = ref(4);
-const threadCount = computed(() => forum.value.threads?.length);
+const threadCount = computed(() => forum.value?.threads?.length || 0);
 const totalPages = computed(() =>
   threadCount.value ? Math.ceil(threadCount.value / perPage.value) : 0
 );

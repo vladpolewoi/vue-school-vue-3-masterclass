@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 import useNotifications from "@/composables/useNotifications.js";
 
 export default {

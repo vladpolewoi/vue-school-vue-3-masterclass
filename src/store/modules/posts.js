@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 import {
   docToResource,
   makeFetchItemAction,
@@ -16,6 +16,7 @@ export default {
       const payload = {
         userId: rootState.auth.authId,
         publishedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        firstInThread: false,
         ...post,
       };
 
@@ -31,10 +32,15 @@ export default {
         .collection("users")
         .doc(rootState.auth.authId);
       batch.set(postRef, payload);
-      batch.update(threadRef, {
+      const threadUpdates = {
         posts: firebase.firestore.FieldValue.arrayUnion(postRef.id),
-        contributors: firebase.firestore.FieldValue.arrayUnion(payload.userId),
-      });
+      };
+      if (!post.firstInThread) {
+        threadUpdates.contributors = firebase.firestore.FieldValue.arrayUnion(
+          payload.userId
+        );
+      }
+      batch.update(threadRef, threadUpdates);
       batch.update(userRef, {
         postsCount: firebase.firestore.FieldValue.increment(1),
       });
@@ -57,14 +63,17 @@ export default {
         },
         { root: true }
       );
-      commit(
-        "threads/APPEND_CONTRIBUTOR_TO_THREAD",
-        {
-          childId: payload.userId,
-          parentId: post.threadId,
-        },
-        { root: true }
-      );
+
+      if (!post.firstInThread) {
+        commit(
+          "threads/APPEND_CONTRIBUTOR_TO_THREAD",
+          {
+            childId: payload.userId,
+            parentId: post.threadId,
+          },
+          { root: true }
+        );
+      }
     },
     async updatePost({ commit, rootState }, { text, id }) {
       const post = {

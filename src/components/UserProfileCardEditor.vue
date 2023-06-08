@@ -117,7 +117,10 @@ const isUploadingImage = ref(false);
 
 const save = async () => {
   await handleRandomAvatarUpload();
-  store.dispatch("users/updateUser", { ...userData });
+  store.dispatch("users/updateUser", {
+    ...userData,
+    threads: userData.threadIds,
+  });
   router.push({ name: "Profile" });
 };
 

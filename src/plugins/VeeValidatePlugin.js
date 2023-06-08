@@ -1,7 +1,7 @@
 import { defineRule, Form, Field, ErrorMessage, configure } from "vee-validate";
 import { required, email, min } from "@vee-validate/rules";
 import { localize } from "@vee-validate/i18n";
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 
 export default (app) => {
   defineRule("required", required);

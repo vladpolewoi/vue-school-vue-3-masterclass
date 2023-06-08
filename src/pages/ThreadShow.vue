@@ -108,7 +108,6 @@ onMounted(async () => {
     onSnapshot: ({ isLocal, item, previousItem }) => {
       if (!isLocal && ready.value) {
         const newPostsIds = difference(item.posts, previousItem.posts);
-        console.log("SASD", newPostsIds);
 
         if (newPostsIds.length === 0) {
           addNotification({ message: "Thread updated", timeout: 2000 });

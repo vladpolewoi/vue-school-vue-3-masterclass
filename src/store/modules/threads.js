@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 import chunk from "lodash/chunk";
 import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 
@@ -31,6 +31,10 @@ export default {
             return thread.posts.length - 1;
           },
           get contributorsCount() {
+            if (!thread.contributors) {
+              return 0;
+            }
+
             return thread.contributors.length;
           },
         };
@@ -98,7 +102,7 @@ export default {
       );
       await dispatch(
         "posts/createPost",
-        { text, threadId: threadRef.id },
+        { text, threadId: threadRef.id, firstInThread: true },
         { root: true }
       );
 

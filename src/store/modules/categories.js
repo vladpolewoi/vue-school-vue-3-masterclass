@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 
 export default {
@@ -14,7 +14,6 @@ export default {
       emoji: "🏷",
     }),
     fetchAllCategories({ commit }) {
-      console.log("🔥", "🏷", "all categories");
       return new Promise((resolve) => {
         const unsubscribe = firebase
           .firestore()

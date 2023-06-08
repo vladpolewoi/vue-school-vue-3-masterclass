@@ -1,4 +1,4 @@
-import firebase from "firebase/compat/app";
+import firebase from "@/helpers/firebase";
 import { makeFetchItemAction, makeFetchItemsAction } from "@/helpers";
 
 import {
@@ -27,7 +27,7 @@ export default {
         const posts = rootState.posts?.items?.filter(
           (post) => post.userId === user.id
         );
-        const threads = rootState.threads?.items?.filter(
+        const threadIds = rootState.threads?.items?.filter(
           (thread) => thread.userId === user.id
         );
         const postsCount = user.postsCount || 0;
@@ -36,7 +36,7 @@ export default {
         return {
           ...user,
           posts,
-          threads,
+          threadIds,
           postsCount,
           threadsCount,
         };
