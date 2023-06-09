@@ -14,6 +14,19 @@ export default {
     },
   },
   actions: {
+    async updateEmail(_, { email }) {
+      return firebase.auth().currentUser.updateEmail(email);
+    },
+    async reauthenticate(_, { email, password }) {
+      const credential = firebase.auth.EmailAuthProvider.credential(
+        email,
+        password
+      );
+
+      return firebase
+        .auth()
+        .currentUser.reauthenticateWithCredential(credential);
+    },
     initAuthentication({ dispatch, commit, state }) {
       if (state.authObserverUnsubscribe) {
         state.authObserverUnsubscribe();

@@ -94,14 +94,21 @@
         <button type="submit" class="btn-blue">Save</button>
       </div>
     </VeeForm>
+    <UserProfileCardEditorReauthenticate
+      v-model="needsReAuth"
+      @success="onReauthenticated"
+      @fail="onReauthenticatedFailed"
+    />
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from "vue";
+import { reactive, ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import UserProfileCardEditorRandomAvatar from "@/components/UserProfileCardEditorRandomAvatar.vue";
+import UserProfileCardEditorReauthenticate from "./UserProfileCardEditorReauthenticate.vue";
+import useNotifications from "@/composables/useNotifications";
 import AppFormField from "./AppFormField.vue";
 
 const props = defineProps({
@@ -112,16 +119,33 @@ const props = defineProps({
 });
 const store = useStore();
 const router = useRouter();
+const { addNotification } = useNotifications();
 const userData = reactive(JSON.parse(JSON.stringify(props.user)));
 const isUploadingImage = ref(false);
 
-const save = async () => {
-  await handleRandomAvatarUpload();
-  store.dispatch("users/updateUser", {
+async function saveUserData() {
+  await store.dispatch("users/updateUser", {
     ...userData,
     threads: userData.threadIds,
   });
+  addNotification({
+    message: "Profile updated successfully.",
+    type: "success",
+    timeout: 3000,
+  });
   router.push({ name: "Profile" });
+}
+
+const save = async () => {
+  await handleRandomAvatarUpload();
+
+  const emailChanged = userData.email !== props.user.email;
+
+  if (emailChanged) {
+    needsReAuth.value = true;
+  } else {
+    saveUserData();
+  }
 };
 
 const cancel = () => {
@@ -140,7 +164,7 @@ async function onAvatarChange(e) {
 }
 
 async function handleRandomAvatarUpload() {
-  const randomAvatarGenerated = userData.avatar.startsWith("https://pixabay");
+  const randomAvatarGenerated = userData?.avatar?.startsWith("https://pixabay");
 
   if (randomAvatarGenerated) {
     const image = await fetch(userData.avatar);
@@ -162,6 +186,25 @@ async function loadLocationOptions() {
 
 function onMouseEnterLocations() {
   loadLocationOptions();
+}
+
+// Reauthentication
+const needsReAuth = ref(false);
+
+async function onReauthenticated() {
+  await store.dispatch("auth/updateEmail", { email: userData.email });
+  saveUserData();
+  needsReAuth.value = false;
+}
+
+function onReauthenticatedFailed() {
+  addNotification({
+    type: "error",
+    message: "Reauthentication failed. Please try again.",
+    timeout: 3000,
+  });
+  router.push({ name: "Profile" });
+  needsReAuth.value = true;
 }
 </script>
 

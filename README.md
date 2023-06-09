@@ -1,35 +1,41 @@
-# vue3_lessons
+# Vue 3 Masterclass
 
-This template should help get you started developing with Vue 3 in Vite.
+### Vue 3 [Course](https://vueschool.io/courses/the-vuejs-3-master-class) by [VueSchool.io](https://vueschool.io/) ( 157 lessons )
 
-## Recommended IDE Setup
+<br/>
+<br/>
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## About the The Vue.js 3 Masterclass course:
 
-## Customize configuration
+This is the supercharged, remastered Vue.js 3 Masterclass.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+We’ve taken all the feedback we got from The Vue.js 2 Masterclass, and supercharged The Vue.js Masterclass with all the new goodies from Vue.js 3 and the ecosystem.
 
-## Project Setup
+This is our signature course. It is probably the most thorough Vue.js course available online.
 
-```sh
-npm install
-```
+The Vue.js Masterclass is so comprehensive that we can not cover everything on this page. Thus we’ve created a separate page where you can learn more about it.
 
-### Compile and Hot-Reload for Development
+In our Masterclass you'll learn Vue.js by building a real-world application. Together we’ll create a complete forum from scratch using exciting technologies that synergize with Vue.
 
-```sh
-npm run dev
-```
+The goal of the Masterclass is to teach you Vue.js along with Best Practices, Modern Javascript, and other exciting technologies, by building a Real World application - a forum.
+We cover the fundamentals, like:
 
-### Compile and Minify for Production
+- Vue cli, router, and State management with Vuex
+- Modern Javascript (ES6/7/8)
+- User permissions & Route Guards
+- Third party authentication
+- Google Cloud Firestore
+- Automatic code review with ESLint
+- Consuming REST API
+- Application architecture and best practices
 
-```sh
-npm run build
-```
+We also dive into harder topics, like:
 
-### Lint with [ESLint](https://eslint.org/)
+- Higher Order Functions
+- Creating Vue Plugins
+- Code Splitting
+- Support for older Browsers
+- Webpack configuration
+- Deployments
 
-```sh
-npm run lint
-```
+By completing the Vue.js Masterclass, you will be able to land any Vue related job or optimize/improve your own projects!
